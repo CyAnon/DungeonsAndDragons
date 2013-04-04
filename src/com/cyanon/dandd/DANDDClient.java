@@ -13,6 +13,7 @@ public class DANDDClient extends Thread {
 	protected ObjectInputStream ois;
 	
 	protected Attack nextAttack;
+	protected String thisPlayerHandle;
 		
 	public DANDDClient(Socket s)
 	{
@@ -33,6 +34,7 @@ public class DANDDClient extends Thread {
 		
 		try
 		{
+			this.thisPlayerHandle = (String)ois.readObject();
 			nextAttack = (Attack)ois.readObject();
 		}
 		catch (ClassNotFoundException | IOException e1)
@@ -40,7 +42,7 @@ public class DANDDClient extends Thread {
 			System.err.println("Fucking annoying networking error. God fucking dammit.");
 			e1.printStackTrace();
 		}
-		System.out.println("Player chose " + this.nextAttack.getAttackName() + " and dealt " + nextAttack.getAttackDamage() + " damage!");
+		System.out.println("Player " + this.thisPlayerHandle + " chose " + this.nextAttack.getAttackName() + " and dealt " + nextAttack.getAttackDamage() + " damage!");
 	}
 
 }

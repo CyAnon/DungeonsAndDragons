@@ -1,0 +1,31 @@
+RUN METHOD FROM DANDDCLIENT
+
+this.nextAttack = null;
+		
+		try
+		{
+			this.thisPlayerHandle = (String)ois.readObject();
+			nextAttack = (Attack)ois.readObject();
+		}
+		catch (ClassNotFoundException | IOException e1)
+		{
+			System.err.println("Fucking annoying networking error. God fucking dammit.");
+			e1.printStackTrace();
+		}
+		System.out.println("Player " + this.thisPlayerHandle + " chose " + this.nextAttack.getAttackName() + " and dealt " + nextAttack.getAttackDamage() + " damage!");
+
+PRINTINTERFACE DUMP
+		
+	protected void printInterface() //DUMPED CODE HERE: NOT ACTUAL METHOD! DO NOT CALL!
+	{
+		serverMonster = new Hydra(100);
+		System.out.println("New battle ready: " + playerMonster.formattedName + " VS " + serverMonster.formattedName + "!");
+			
+		gamePlaying = true;
+		
+		while(gamePlaying)
+		{
+			playerMonster.tick();
+			serverMonster.tick(); //tick the server monster when the player monster makes its move, and vice versa
+		}
+	}

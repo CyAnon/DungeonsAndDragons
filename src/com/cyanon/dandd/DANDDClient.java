@@ -11,38 +11,29 @@ import com.cyanon.dandd.attacktype.Attack;
 public class DANDDClient extends Thread {
 	
 	protected ObjectInputStream ois;
+	protected ObjectOutputStream oos;
 	
 	protected Attack nextAttack;
 	protected String thisPlayerHandle;
 		
-	public DANDDClient(Socket s)
+	public DANDDClient(Socket s, String thisGameName) throws IOException
 	{
 		try
 		{
 			this.ois = new ObjectInputStream(s.getInputStream());
+			this.oos = new ObjectOutputStream(s.getOutputStream());
+			oos.flush();
+			oos.writeObject(thisGameName);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		//System.out.println("A player has joined! Currently " + ++playersOnline + " online right now...");
 	}
 
 	public void run()
 	{
-		this.nextAttack = null;
 		
-		try
-		{
-			this.thisPlayerHandle = (String)ois.readObject();
-			nextAttack = (Attack)ois.readObject();
-		}
-		catch (ClassNotFoundException | IOException e1)
-		{
-			System.err.println("Fucking annoying networking error. God fucking dammit.");
-			e1.printStackTrace();
-		}
-		System.out.println("Player " + this.thisPlayerHandle + " chose " + this.nextAttack.getAttackName() + " and dealt " + nextAttack.getAttackDamage() + " damage!");
 	}
 
 }

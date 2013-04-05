@@ -1,7 +1,9 @@
 package com.cyanon.dandd;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -17,54 +19,61 @@ public class GameLoop {
 	static 	ObjectInputStream ois;
 	static InputStream is;
 	
-	ArrayList<ObjectOutputStream> connectedClientStreams = new ArrayList<ObjectOutputStream>();
+	private InputStreamReader isr;
+	private BufferedReader br;
 	
-	protected boolean gamePlaying = false;
+	//ArrayList<ObjectOutputStream> connectedClientStreams = new ArrayList<ObjectOutputStream>();
+	ArrayList<Thread> connectedClientThreads = new ArrayList<Thread>();
 	
-	private int playersOnline = 0;
+	public boolean gamePlaying = false;
 	
-	public GameLoop() {
+	//private int playersOnline = 0;
+	
+	private String thisGameName;
+	
+	public GameLoop() throws IOException {
+		this.isr = new InputStreamReader(System.in);
+		this.br = new BufferedReader(isr);
+		
 		System.out.println("Starting Dungeons and Dragons...");
+		System.out.println("Please enter a game name below :-");
+		this.thisGameName = br.readLine();
+		System.out.println("Thank you. Initiating game " + this.thisGameName + "...");
 	}
-	
-	protected Monster serverMonster;
-	protected Monster playerMonster;
 	
 	public void start()
 	{	
-		try {
-			ss = new ServerSocket(54949);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		System.out.println("Waiting on a player to join on port 54949...");
-
+		while (gamePlaying)
+		{
+			try {
+				ss = new ServerSocket(54949);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			System.out.println("Waiting on a player to join on port 54949...");
+	
 			try
 			{
 				Socket client = ss.accept();
-				connectedClientStreams.add(new ObjectOutputStream(client.getOutputStream()));
-				Thread t = new Thread(new DANDDClient(client));
+				//connectedClientStreams.add(new ObjectOutputStream(client.getOutputStream()));
+				Thread t = new Thread(new DANDDClient(client, thisGameName));
+				connectedClientThreads.add(t);
 				t.start();
 			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
-		
+		}
+		stop();
 	}
 	
-	protected void printInterface() //DUMPED CODE HERE: NOT ACTUAL METHOD! DO NOT CALL!
+	public void stop()
 	{
-		serverMonster = new Hydra(100);
-		System.out.println("New battle ready: " + playerMonster.formattedName + " VS " + serverMonster.formattedName + "!");
-			
-		gamePlaying = true;
-		
-		while(gamePlaying)
+		for (Thread t : connectedClientThreads)
 		{
-			playerMonster.tick();
-			serverMonster.tick(); //tick the server monster when the player monster makes its move, and vice versa
+			t.interrupt();
 		}
+		System.out.println("Killing game server...");
 	}
-
 }

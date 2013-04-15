@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import com.cyanon.dandd.battle.Lobby;
 import com.cyanon.dandd.monsters.*;
 
 public class GameLoop {
@@ -25,6 +26,8 @@ public class GameLoop {
 	//ArrayList<ObjectOutputStream> connectedClientStreams = new ArrayList<ObjectOutputStream>();
 	ArrayList<Thread> connectedClientThreads = new ArrayList<Thread>();
 	
+	private Lobby lobbyOne;
+	
 	public boolean gamePlaying = false;
 	
 	//private int playersOnline = 0;
@@ -39,24 +42,27 @@ public class GameLoop {
 		System.out.println("Please enter a game name below :-");
 		this.thisGameName = br.readLine();
 		System.out.println("Thank you. Initiating game " + this.thisGameName + "...");
+		
+		System.out.println("Loading new lobby...");
+		this.lobbyOne = new Lobby(thisGameName);
+		
+		try {
+			ss = new ServerSocket(54949);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Waiting on a player to join on port 54949...");
 	}
 	
 	public void start()
 	{	
 		while (gamePlaying)
 		{
-			try {
-				ss = new ServerSocket(54949);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			System.out.println("Waiting on a player to join on port 54949...");
-	
 			try
 			{
 				Socket client = ss.accept();
 				//connectedClientStreams.add(new ObjectOutputStream(client.getOutputStream()));
-				Thread t = new Thread(new DANDDClient(client, thisGameName));
+				Thread t = new Thread(new DANDDClient(client, thisGameName, lobbyOne));
 				connectedClientThreads.add(t);
 				t.start();
 			}

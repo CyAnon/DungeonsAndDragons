@@ -1,7 +1,5 @@
 package com.cyanon.dandd.monsters;
 
-import java.util.ArrayList;
-
 import com.cyanon.dandd.attacktype.*;
 import com.cyanon.dandd.attacktype.element.Element;
 

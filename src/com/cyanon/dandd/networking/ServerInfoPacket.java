@@ -11,6 +11,16 @@ public class ServerInfoPacket extends Packet implements Serializable {
 	private String serverName;
 	private int serverPlayers;
 	
+	public ServerInfoPacket(String name)
+	{
+		setServerName(name);
+	}
+	
+	public ServerInfoPacket(int players)
+	{
+		setServerPlayers(players);
+	}
+	
 	public ServerInfoPacket(String name, int players)
 	{
 		setServerName(name);

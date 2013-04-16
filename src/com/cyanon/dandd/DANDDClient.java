@@ -9,6 +9,7 @@ import java.net.Socket;
 import com.cyanon.dandd.attacktype.Attack;
 import com.cyanon.dandd.battle.Battle;
 import com.cyanon.dandd.battle.Lobby;
+import com.cyanon.dandd.networking.ClientInfoPacket;
 import com.cyanon.dandd.networking.ServerInfoPacket;
 
 public class DANDDClient extends Thread {
@@ -22,41 +23,7 @@ public class DANDDClient extends Thread {
 	protected Attack nextAttack;
 	protected String thisPlayerHandle;
 		
-	public DANDDClient(Socket s, String thisGameName) throws IOException
-	{
-		try
-		{
-			this.ois = new ObjectInputStream(s.getInputStream());
-			this.oos = new ObjectOutputStream(s.getOutputStream());
-			oos.flush();
-			oos.writeObject(thisGameName);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		this.thisBattle = new Battle(this);
-	}
-	
-	public DANDDClient(Socket s, String thisGameName, Battle battleToJoin) throws IOException
-	{
-		try
-		{
-			this.ois = new ObjectInputStream(s.getInputStream());
-			this.oos = new ObjectOutputStream(s.getOutputStream());
-			oos.flush();
-			oos.writeObject(thisGameName);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		
-		battleToJoin.joinGame(this);
-	}
-
-	public DANDDClient(Socket s, String thisGameName, Lobby lobby) 
+	public DANDDClient(Socket s, String thisGameName, Lobby lobby)
 	{
 		thisLobby = lobby;
 		try
@@ -66,12 +33,19 @@ public class DANDDClient extends Thread {
 			oos.flush();
 			oos.writeObject(new ServerInfoPacket(thisLobby.getLobbyName(), 0));
 			oos.flush();
+			ClientInfoPacket cip = (ClientInfoPacket)ois.readObject();
+			this.thisPlayerHandle = cip.getClientName();
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+		} 
+		catch (ClassNotFoundException e) 
+		{
+			System.out.println("Boo");
+			e.printStackTrace();
 		}
-		System.out.println("Joining lobby with " + thisLobby.addNewBattle(this) + " people...");
+		System.out.println(thisPlayerHandle + " has joined the lobby with " + thisLobby.addNewBattle(this) + " other people..."); //Fix for person/people
 	}
 
 	public void run()

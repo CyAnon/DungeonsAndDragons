@@ -20,8 +20,7 @@ public class Lobby {
 	public int addNewBattle(DANDDClient firstPlayer)
 	{
 		thisLobby.add(new Battle(firstPlayer));
-		System.out.println("Welcome to the lobby!");
-		return thisLobby.size();
+		return thisLobby.size() - 1;
 	}
 	
 	public void removeOldBattle(int index)

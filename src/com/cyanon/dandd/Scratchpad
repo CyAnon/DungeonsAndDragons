@@ -29,3 +29,37 @@ PRINTINTERFACE DUMP
 			serverMonster.tick(); //tick the server monster when the player monster makes its move, and vice versa
 		}
 	}
+	
+		public DANDDClient(Socket s, String thisGameName) throws IOException
+	{
+		try
+		{
+			this.ois = new ObjectInputStream(s.getInputStream());
+			this.oos = new ObjectOutputStream(s.getOutputStream());
+			oos.flush();
+			oos.writeObject(thisGameName);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		this.thisBattle = new Battle(this);
+	}
+	
+	public DANDDClient(Socket s, String thisGameName, Battle battleToJoin) throws IOException
+	{
+		try
+		{
+			this.ois = new ObjectInputStream(s.getInputStream());
+			this.oos = new ObjectOutputStream(s.getOutputStream());
+			oos.flush();
+			oos.writeObject(thisGameName);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		battleToJoin.joinGame(this);
+	}

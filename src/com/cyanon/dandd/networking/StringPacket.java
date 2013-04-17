@@ -1,13 +1,27 @@
 package com.cyanon.dandd.networking;
 
-public class StringPacket {
+import java.io.Serializable;
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+public class StringPacket extends Packet implements Serializable {
 
+	private String myMessage;
+	
+	public StringPacket(String input)
+	{
+		setMyMessage(input);
+	}
+
+	public String getMyMessage() {
+		return myMessage;
+	}
+
+	public void setMyMessage(String myMessage) {
+		this.myMessage = myMessage;
+	}
+	
+	public String getPayload()
+	{
+		return myMessage;
 	}
 
 }

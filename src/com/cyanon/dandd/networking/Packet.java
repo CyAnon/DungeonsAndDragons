@@ -13,5 +13,10 @@ public abstract class Packet implements Serializable {
 	{
 		
 	}
+	
+	public Object getPayload()
+	{
+		return null;
+	}
 
 }

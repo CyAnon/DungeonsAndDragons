@@ -51,7 +51,9 @@ public class DANDDClient extends Thread {
 			e.printStackTrace();
 		}
 		clientLive = true;
-		System.out.println(thisPlayerHandle + " has joined the lobby with " + thisLobby.addNewBattle(this) + " other people..."); //Fix for person/people
+		System.out.println(thisPlayerHandle + " has joined the lobby with " + 0 + " other people..."); //Fix for person/people
+		
+		thisLobby.addToTestBattle(this);
 	}
 
 	public void run()
@@ -91,5 +93,10 @@ public class DANDDClient extends Thread {
 		{
 			System.out.println(thisPlayerHandle + " said:" + packet.getPayload());
 		}
+	}
+	
+	public String getPlayerHandle()
+	{
+		return thisPlayerHandle;
 	}
 }

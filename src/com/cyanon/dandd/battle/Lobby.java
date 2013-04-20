@@ -11,16 +11,18 @@ public class Lobby {
 	
 	ArrayList<Battle> thisLobby = new ArrayList<Battle>();
 	
+	private Battle testBattle;
+	
 	public Lobby(String thisGameName)
 	{
 		this.lobbyName = thisGameName;
 		System.out.println("Lobby " + lobbyName + " active and ready...");
+		testBattle = new Battle();
 	}
 	
-	public int addNewBattle(DANDDClient firstPlayer)
+	public void addToTestBattle(DANDDClient player)
 	{
-		thisLobby.add(new Battle(firstPlayer));
-		return thisLobby.size() - 1;
+		testBattle.joinGame(player);
 	}
 	
 	public void removeOldBattle(int index)
@@ -34,6 +36,14 @@ public class Lobby {
 
 	public void setLobbyName(String lobbyName) {
 		this.lobbyName = lobbyName;
+	}
+
+	public Battle getTestBattle() {
+		return testBattle;
+	}
+
+	public void setTestBattle(Battle testBattle) {
+		this.testBattle = testBattle;
 	}
 	
 	

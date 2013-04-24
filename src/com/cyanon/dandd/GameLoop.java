@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import com.cyanon.dandd.battle.Lobby;
+import com.cyanon.dandd.gui.MainFrame;
 import com.cyanon.dandd.monsters.*;
 
 public class GameLoop {
@@ -22,6 +23,8 @@ public class GameLoop {
 	
 	private InputStreamReader isr;
 	private BufferedReader br;
+	
+	private MainFrame mainWindow;
 	
 	//ArrayList<ObjectOutputStream> connectedClientStreams = new ArrayList<ObjectOutputStream>();
 	ArrayList<Thread> connectedClientThreads = new ArrayList<Thread>();
@@ -37,6 +40,8 @@ public class GameLoop {
 	public GameLoop() throws IOException {
 		this.isr = new InputStreamReader(System.in);
 		this.br = new BufferedReader(isr);
+		
+		mainWindow = new MainFrame();
 		
 		System.out.println("Starting Dungeons and Dragons...");
 		System.out.println("Please enter a game name below :-");

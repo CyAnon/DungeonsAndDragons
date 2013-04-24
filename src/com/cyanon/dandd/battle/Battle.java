@@ -1,8 +1,11 @@
 package com.cyanon.dandd.battle;
 
-import com.cyanon.dandd.DANDDClient;
+import java.io.IOException;
 
-public class Battle {
+import com.cyanon.dandd.DANDDClient;
+import com.cyanon.dandd.networking.Packet;
+
+public class Battle implements Runnable {
 
 	public DANDDClient playerOne = null;
 	public DANDDClient playerTwo = null;
@@ -33,6 +36,8 @@ public class Battle {
 	private void announceBattleDetails()
 	{
 		System.out.println("New battle! " + playerOne.getPlayerHandle() + " VS " + playerTwo.getPlayerHandle() + "!");
+		playerOne.setClientInBattle(true);
+		playerTwo.setClientInBattle(true);
 	}
 	
 	public int getPlayersInBattle()
@@ -43,6 +48,17 @@ public class Battle {
 	public void tick()
 	{
 		
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void processMessagePacket(Packet packet) throws IOException {
+		playerOne.printPacketMessageToClient(packet);
+		playerTwo.printPacketMessageToClient(packet);
 	}
 	
 

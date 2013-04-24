@@ -13,6 +13,7 @@ import com.cyanon.dandd.battle.Lobby;
 import com.cyanon.dandd.networking.ClientInfoPacket;
 import com.cyanon.dandd.networking.Packet;
 import com.cyanon.dandd.networking.ServerInfoPacket;
+import com.cyanon.dandd.networking.ServerToClientMessagePacket;
 import com.cyanon.dandd.networking.StringPacket;
 
 public class DANDDClient extends Thread {
@@ -27,6 +28,7 @@ public class DANDDClient extends Thread {
 	protected String thisPlayerHandle;
 	
 	private Boolean clientLive = false;
+	private Boolean clientInBattle = false;
 		
 	public DANDDClient(Socket s, String thisGameName, Lobby lobby)
 	{
@@ -54,6 +56,7 @@ public class DANDDClient extends Thread {
 		System.out.println(thisPlayerHandle + " has joined the lobby with " + 0 + " other people..."); //Fix for person/people
 		
 		thisLobby.addToTestBattle(this);
+		this.thisBattle = thisLobby.getTestBattle();
 	}
 
 	public void run()
@@ -74,7 +77,9 @@ public class DANDDClient extends Thread {
 			{
 				System.out.println(thisPlayerHandle + " has left the game.");
 				clientLive = false;
-			} catch (IOException e) {
+			} 
+			catch (IOException e) 
+			{
 				System.err.println("Dead!");
 			}
 			
@@ -87,16 +92,36 @@ public class DANDDClient extends Thread {
 		oos.flush();
 	}
 	
-	private void processPacket(Packet packet)
+	private void processPacket(Packet packet) throws IOException
 	{
 		if (packet instanceof StringPacket)
 		{
-			System.out.println(thisPlayerHandle + " said:" + packet.getPayload());
+			if (!clientInBattle)
+			{
+				printPacketMessageToClient(packet);
+			}
+			else
+			{
+				thisBattle.processMessagePacket(packet);
+			}
 		}
+	}
+	
+	public void printPacketMessageToClient(Packet packet) throws IOException
+	{
+		oos.writeObject(new ServerToClientMessagePacket(packet.getPayload().toString()));
 	}
 	
 	public String getPlayerHandle()
 	{
 		return thisPlayerHandle;
+	}
+
+	public Boolean getClientInBattle() {
+		return clientInBattle;
+	}
+
+	public void setClientInBattle(Boolean clientInBattle) {
+		this.clientInBattle = clientInBattle;
 	}
 }

@@ -22,11 +22,13 @@ public class Battle implements Runnable {
 		if (playerOne == null)
 		{
 			this.playerOne = clientJoin;
+			this.playerOne.setPlayerNumber(1);
 			playersInBattle = 1;
 		}
 		else
 		{
 			this.playerTwo = clientJoin;
+			this.playerOne.setPlayerNumber(2);
 			playersInBattle = 2;
 			battleFull = true;
 			announceBattleDetails();
@@ -56,9 +58,11 @@ public class Battle implements Runnable {
 		
 	}
 
-	public void processMessagePacket(Packet packet) throws IOException {
-		playerOne.printPacketMessageToClient(packet);
-		playerTwo.printPacketMessageToClient(packet);
+	public void processMessagePacket(DANDDClient clientFrom, Packet packet) throws IOException {
+		if (playerOne.getPlayerNumber() == clientFrom.getPlayerNumber())
+			playerTwo.printPacketMessageToClient(packet);
+		else
+			playerOne.printPacketMessageToClient(packet);
 	}
 	
 

@@ -29,6 +29,8 @@ public class DANDDClient extends Thread {
 	
 	private Boolean clientLive = false;
 	private Boolean clientInBattle = false;
+	
+	private int playerNumber;
 		
 	public DANDDClient(Socket s, String thisGameName, Lobby lobby)
 	{
@@ -40,8 +42,7 @@ public class DANDDClient extends Thread {
 			oos.flush();
 			oos.writeObject(new ServerInfoPacket(thisLobby.getLobbyName(), 0));
 			oos.flush();
-			ClientInfoPacket cip = (ClientInfoPacket)ois.readObject();
-			this.thisPlayerHandle = cip.getClientName();
+			processPacket((ClientInfoPacket)ois.readObject());
 		}
 		catch (IOException e)
 		{
@@ -102,8 +103,12 @@ public class DANDDClient extends Thread {
 			}
 			else
 			{
-				thisBattle.processMessagePacket(packet);
+				thisBattle.processMessagePacket(this, packet);
 			}
+		}
+		else if (packet instanceof ClientInfoPacket)
+		{
+			this.thisPlayerHandle = packet.getClientName();
 		}
 	}
 	
@@ -123,5 +128,13 @@ public class DANDDClient extends Thread {
 
 	public void setClientInBattle(Boolean clientInBattle) {
 		this.clientInBattle = clientInBattle;
+	}
+
+	public int getPlayerNumber() {
+		return playerNumber;
+	}
+
+	public void setPlayerNumber(int playerNumber) {
+		this.playerNumber = playerNumber;
 	}
 }

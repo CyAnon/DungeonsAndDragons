@@ -98,7 +98,7 @@ public class DANDDClient extends Thread {
 			}
 			else
 			{
-				thisBattle.sendPacketToOtherClient(this, packet);
+				thisBattle.sendMessageToOtherClient(this, packet);
 			}
 		}
 		else if (packet instanceof ClientInfoPacket)
@@ -118,21 +118,23 @@ public class DANDDClient extends Thread {
 	
 	public void processAttack(Packet packet) throws IOException
 	{
-//		if (!packet.processedByServer)
-//		{
-//			packet.processedByServer = true;
-//			this.thisBattle.sendPacketToOtherClient(this, packet);
-//		}
-//		else
-//		{
-			System.out.println(thisPlayerHandle + "has been attacked!");
+		if (!packet.processedByServer)
+		{
+			packet.processedByServer = true;
+			this.thisBattle.sendPacketToOtherClient(this, packet);
+		}
+		else
+		{
+			System.out.println(thisBattle.getOtherClient(this).thisPlayerHandle + " has attacked " + thisPlayerHandle + " with " + packet.getPayloadName());
 			myMonster.sufferAttack((Attack) packet.getPayload());
-//		}
+			System.out.println(thisPlayerHandle + "\'s " + myMonster.formattedName + " has " + myMonster.getHealth() + " health!");
+		}
 	}
 	
 	public void printPacketMessageToClient(Packet packet) throws IOException
 	{
 		oos.writeObject(new ServerToClientMessagePacket(packet.getPayload().toString()));
+		oos.flush();
 	}
 	
 	public String getPlayerHandle()

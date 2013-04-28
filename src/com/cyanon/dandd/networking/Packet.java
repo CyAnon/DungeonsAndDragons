@@ -18,6 +18,11 @@ public abstract class Packet implements Serializable {
 	{
 		return null;
 	}
+	
+	public String getPayloadName()
+	{
+		return null;
+	}
 
 	public String getClientName() 
 	{

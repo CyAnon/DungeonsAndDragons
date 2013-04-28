@@ -18,10 +18,15 @@ public class AttackPacket extends Packet implements Serializable {
 		this.setAttackPayload(attack);
 	}
 
-	public Attack getPayload() {
+	public Attack getPayload() 
+	{
 		return attackPayload;
 	}
-
+	
+	public String getPayloadName()
+	{
+		return attackPayload.getAttackName();
+	}
 	public void setAttackPayload(Attack attackPayload) {
 		this.attackPayload = attackPayload;
 	}

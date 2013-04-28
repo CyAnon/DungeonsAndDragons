@@ -64,6 +64,13 @@ public class Battle implements Runnable {
 		else
 			playerOne.processPacket(packet);
 	}
+	
+	public void sendMessageToOtherClient(DANDDClient clientFrom, Packet packet) throws IOException {
+		if (playerOne.getPlayerNumber() == clientFrom.getPlayerNumber())
+			playerTwo.printPacketMessageToClient(packet);
+		else
+			playerOne.printPacketMessageToClient(packet);
+	}
 		
 	public DANDDClient getOtherClient(DANDDClient in)
 	{

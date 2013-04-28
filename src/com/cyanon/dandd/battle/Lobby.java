@@ -10,19 +10,20 @@ public class Lobby {
 	private int maxBattles = 50;
 	
 	ArrayList<Battle> thisLobby = new ArrayList<Battle>();
-	
-	private Battle testBattle;
-	
+		
 	public Lobby(String thisGameName)
 	{
 		this.lobbyName = thisGameName;
 		System.out.println("Lobby " + lobbyName + " active and ready...");
-		testBattle = new Battle();
+		if (thisLobby.isEmpty() || thisLobby.get(thisLobby.size() - 1).getBattleFull() == true)
+		{
+			thisLobby.add(new Battle());
+		}
 	}
 	
 	public void addToTestBattle(DANDDClient player)
 	{
-		testBattle.joinGame(player);
+		thisLobby.get(thisLobby.size() - 1).joinGame(player);
 	}
 	
 	public void removeOldBattle(int index)
@@ -37,14 +38,20 @@ public class Lobby {
 	public void setLobbyName(String lobbyName) {
 		this.lobbyName = lobbyName;
 	}
-
-	public Battle getTestBattle() {
-		return testBattle;
+	
+	public Battle getNewestBattle()
+	{
+		return thisLobby.get(thisLobby.size() - 1);
 	}
 
-	public void setTestBattle(Battle testBattle) {
-		this.testBattle = testBattle;
-	}
+//DEPRECATED
+//	public Battle getTestBattle() {
+//		return testBattle;
+//	}
+//
+//	public void setTestBattle(Battle testBattle) {
+//		this.testBattle = testBattle;
+//	}
 	
 	
 

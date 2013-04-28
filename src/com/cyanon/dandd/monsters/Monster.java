@@ -108,4 +108,10 @@ public abstract class Monster implements Serializable {
 		}
 		
 	}
+	
+	public void sufferAttack(Attack attack)
+	{
+		currentHealth -= attack.getAttackDamage();
+		System.out.println("Health:" + this.currentHealth);
+	}
 }

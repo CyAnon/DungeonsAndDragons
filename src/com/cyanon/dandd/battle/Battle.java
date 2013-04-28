@@ -30,7 +30,7 @@ public class Battle implements Runnable {
 			this.playerTwo = clientJoin;
 			this.playerOne.setPlayerNumber(2);
 			playersInBattle = 2;
-			battleFull = true;
+			setBattleFull(true);
 			announceBattleDetails();
 		}
 	}
@@ -57,12 +57,28 @@ public class Battle implements Runnable {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public void processMessagePacket(DANDDClient clientFrom, Packet packet) throws IOException {
+	
+	public void sendPacketToOtherClient(DANDDClient clientFrom, Packet packet) throws IOException {
 		if (playerOne.getPlayerNumber() == clientFrom.getPlayerNumber())
-			playerTwo.printPacketMessageToClient(packet);
+			playerTwo.processPacket(packet);
 		else
-			playerOne.printPacketMessageToClient(packet);
+			playerOne.processPacket(packet);
+	}
+		
+	public DANDDClient getOtherClient(DANDDClient in)
+	{
+		if (playerOne.getPlayerNumber() == in.getPlayerNumber())
+			return playerTwo;
+		else
+			return playerOne;
+	}
+
+	public Boolean getBattleFull() {
+		return battleFull;
+	}
+
+	public void setBattleFull(Boolean battleFull) {
+		this.battleFull = battleFull;
 	}
 	
 

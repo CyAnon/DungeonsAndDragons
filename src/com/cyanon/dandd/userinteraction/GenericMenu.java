@@ -1,8 +1,9 @@
 package com.cyanon.dandd.userinteraction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GenericMenu {
+public class GenericMenu implements Serializable {
 
 	protected ArrayList<String> menuOptions;
 	

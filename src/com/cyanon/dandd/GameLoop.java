@@ -24,7 +24,7 @@ public class GameLoop {
 	private InputStreamReader isr;
 	private BufferedReader br;
 	
-	private MainFrame mainWindow;
+//	private MainFrame mainWindow;
 	
 	//ArrayList<ObjectOutputStream> connectedClientStreams = new ArrayList<ObjectOutputStream>();
 	ArrayList<Thread> connectedClientThreads = new ArrayList<Thread>();
@@ -41,7 +41,7 @@ public class GameLoop {
 		this.isr = new InputStreamReader(System.in);
 		this.br = new BufferedReader(isr);
 		
-		mainWindow = new MainFrame();
+//		mainWindow = new MainFrame();
 		
 		System.out.println("Starting Dungeons and Dragons...");
 		System.out.println("Please enter a game name below :-");

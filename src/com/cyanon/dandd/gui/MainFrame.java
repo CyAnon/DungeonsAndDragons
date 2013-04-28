@@ -1,20 +1,27 @@
 package com.cyanon.dandd.gui;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
-public class MainFrame extends JFrame {
+public class MainFrame {
 
-	JPanel mainPanel = new JPanel();
+	private static void createAndShowGUI()
+	{
+		JFrame jframe = new JFrame("HelloWorldSwing");
+		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JLabel label = new JLabel("DungeonsAndDragons");
+		jframe.getContentPane().add(label);
+		
+		jframe.pack();
+		jframe.setVisible(true);
+	}
 	
 	public MainFrame()
 	{
-		super("Dungeons And Dragons Server");
-		setBounds(100, 100, 640, 480);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Container con = this.getContentPane();
-		con.add(mainPanel);
-		setVisible(true);
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				createAndShowGUI();
+			}
+		});
 	}
 }

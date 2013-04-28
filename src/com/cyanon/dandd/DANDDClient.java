@@ -3,18 +3,13 @@
 package com.cyanon.dandd;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
 import com.cyanon.dandd.attacktype.Attack;
-import com.cyanon.dandd.battle.Battle;
-import com.cyanon.dandd.battle.Lobby;
-import com.cyanon.dandd.networking.ClientInfoPacket;
-import com.cyanon.dandd.networking.Packet;
-import com.cyanon.dandd.networking.ServerInfoPacket;
-import com.cyanon.dandd.networking.ServerToClientMessagePacket;
-import com.cyanon.dandd.networking.StringPacket;
+import com.cyanon.dandd.battle.*;
+import com.cyanon.dandd.monsters.*;
+import com.cyanon.dandd.networking.*;
 
 public class DANDDClient extends Thread {
 	
@@ -31,6 +26,7 @@ public class DANDDClient extends Thread {
 	private Boolean clientInBattle = false;
 	
 	private int playerNumber;
+	private Monster myMonster;
 		
 	public DANDDClient(Socket s, String thisGameName, Lobby lobby)
 	{
@@ -50,19 +46,18 @@ public class DANDDClient extends Thread {
 		} 
 		catch (ClassNotFoundException e) 
 		{
-			System.out.println("Boo");
 			e.printStackTrace();
 		}
 		clientLive = true;
 		System.out.println(thisPlayerHandle + " has joined the lobby with " + 0 + " other people..."); //Fix for person/people
 		
 		thisLobby.addToTestBattle(this);
-		this.thisBattle = thisLobby.getTestBattle();
+		this.thisBattle = thisLobby.getNewestBattle();
 	}
 
 	public void run()
 	{
-		while(clientLive)
+		while(clientLive) //Fix this.. it's a tad shitty
 		{
 			Packet packet;
 			try 
@@ -81,9 +76,9 @@ public class DANDDClient extends Thread {
 			} 
 			catch (IOException e) 
 			{
-				System.err.println("Dead!");
-			}
-			
+				e.printStackTrace();
+				System.exit(-1);
+			}			
 		}
 	}
 
@@ -93,7 +88,7 @@ public class DANDDClient extends Thread {
 		oos.flush();
 	}
 	
-	private void processPacket(Packet packet) throws IOException
+	public void processPacket(Packet packet) throws IOException
 	{
 		if (packet instanceof StringPacket)
 		{
@@ -103,13 +98,36 @@ public class DANDDClient extends Thread {
 			}
 			else
 			{
-				thisBattle.processMessagePacket(this, packet);
+				thisBattle.sendPacketToOtherClient(this, packet);
 			}
 		}
 		else if (packet instanceof ClientInfoPacket)
 		{
 			this.thisPlayerHandle = packet.getClientName();
+			if (packet.getMonster() != null)
+			{
+				this.myMonster = packet.getMonster();
+				printPacketMessageToClient(new StringPacket("You have chosen " + myMonster.formattedName + " as your creature!"));
+			}
 		}
+		else if (packet instanceof AttackPacket)
+		{
+			processAttack(packet);
+		}
+	}
+	
+	public void processAttack(Packet packet) throws IOException
+	{
+//		if (!packet.processedByServer)
+//		{
+//			packet.processedByServer = true;
+//			this.thisBattle.sendPacketToOtherClient(this, packet);
+//		}
+//		else
+//		{
+			System.out.println(thisPlayerHandle + "has been attacked!");
+			myMonster.sufferAttack((Attack) packet.getPayload());
+//		}
 	}
 	
 	public void printPacketMessageToClient(Packet packet) throws IOException
@@ -136,5 +154,15 @@ public class DANDDClient extends Thread {
 
 	public void setPlayerNumber(int playerNumber) {
 		this.playerNumber = playerNumber;
+	}
+	
+
+	public Monster getMyMonster() {
+		return myMonster;
+	}
+	
+
+	public void setMyMonster(Monster myMonster) {
+		this.myMonster = myMonster;
 	}
 }

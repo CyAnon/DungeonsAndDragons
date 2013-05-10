@@ -19,7 +19,6 @@ public class DANDDClient extends Thread {
 	protected Battle thisBattle;
 	protected Lobby thisLobby;
 	
-	protected Attack nextAttack;
 	protected String thisPlayerHandle;
 	
 	private Boolean clientLive = false;
@@ -36,7 +35,7 @@ public class DANDDClient extends Thread {
 			this.ois = new ObjectInputStream(s.getInputStream());
 			this.oos = new ObjectOutputStream(s.getOutputStream());
 			oos.flush();
-			oos.writeObject(new ServerInfoPacket(thisLobby.getLobbyName(), 0));
+			oos.writeObject(new ServerInfoPacket(thisLobby.getLobbyName(), 0)); //change this
 			oos.flush();
 			processPacket((ClientInfoPacket)ois.readObject());
 		}
@@ -88,9 +87,18 @@ public class DANDDClient extends Thread {
 		oos.flush();
 	}
 	
-	public void processPacket(Packet packet) throws IOException
+	public void processPacket(Packet packet) throws IOException //packet incoming
 	{
-		if (packet instanceof StringPacket)
+		if (packet instanceof ClientInfoPacket)
+		{
+			this.thisPlayerHandle = packet.getClientName();
+			if (packet.getMonster() != null)
+			{
+				this.myMonster = packet.getMonster();
+				printPacketMessageToClient(new ServerToClientPacket("You have chosen " + myMonster.formattedName + " as your creature!"));
+			}
+		}
+		else if (packet.getIsStringPacket()) //message from client arrives on the server, ready to be sent to the other client
 		{
 			if (!clientInBattle)
 			{
@@ -98,42 +106,27 @@ public class DANDDClient extends Thread {
 			}
 			else
 			{
-				thisBattle.sendMessageToOtherClient(this, packet);
+				thisBattle.sendMessageToOtherClient(this, packet); //check transfer logic
 			}
 		}
-		else if (packet instanceof ClientInfoPacket)
-		{
-			this.thisPlayerHandle = packet.getClientName();
-			if (packet.getMonster() != null)
+		else if (packet.getIsAttackPacket()) //attack arrives on the server to be applied to enemy monster, and trigger
+		{									 //a message to other client to inform them they have been attacked
+			if (!packet.processedByServer)
 			{
-				this.myMonster = packet.getMonster();
-				printPacketMessageToClient(new StringPacket("You have chosen " + myMonster.formattedName + " as your creature!"));
+				packet.processedByServer = true;
+				this.thisBattle.sendPacketToOtherClient(this, packet);
 			}
-		}
-		else if (packet instanceof AttackPacket)
-		{
-			processAttack(packet);
-		}
-	}
-	
-	public void processAttack(Packet packet) throws IOException
-	{
-		if (!packet.processedByServer)
-		{
-			packet.processedByServer = true;
-			this.thisBattle.sendPacketToOtherClient(this, packet);
-		}
-		else
-		{
-			System.out.println(thisBattle.getOtherClient(this).thisPlayerHandle + " has attacked " + thisPlayerHandle + " with " + packet.getPayloadName());
-			myMonster.sufferAttack((Attack) packet.getPayload());
-			System.out.println(thisPlayerHandle + "\'s " + myMonster.formattedName + " has " + myMonster.getHealth() + " health!");
+			else
+			{
+				myMonster.sufferAttack((Attack) packet.getAttack());
+			}
 		}
 	}
 	
 	public void printPacketMessageToClient(Packet packet) throws IOException
 	{
-		oos.writeObject(new ServerToClientMessagePacket(packet.getPayload().toString()));
+		//sanity check
+		oos.writeObject(new ServerToClientPacket(packet.getString()));
 		oos.flush();
 	}
 	
